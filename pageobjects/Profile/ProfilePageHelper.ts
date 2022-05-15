@@ -62,7 +62,9 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
 
 const parseExperienceArray = (experience : string[]) => {
     const experienceArr = Array.from(experience);
-    
+    experienceArr.forEach(experienceString => {
+        
+    })
 }
 
 
