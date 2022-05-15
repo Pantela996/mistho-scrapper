@@ -1,3 +1,0 @@
-spawn a child process that will read and write data
-real time redis
-paralelizacija koda
