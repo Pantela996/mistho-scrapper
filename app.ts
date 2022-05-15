@@ -5,10 +5,15 @@ import cookieParser from 'cookie-parser';
 import logger from  'morgan';
 import indexRouter from  './routes/index';
 import http from 'http';
+import { connectToDatabase } from './db/MongooseUtil';
 
 require('dotenv').config()
 
 const app : Express = express();
+
+connectToDatabase().then(() => {
+  console.log('mongo connected');
+})
 
 app.use(logger('dev'));
 app.use(express.json());

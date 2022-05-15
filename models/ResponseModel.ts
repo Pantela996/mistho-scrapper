@@ -1,24 +1,24 @@
 class ResponseModel {
-  message : {
-    messageCode : string
+  message: {
+    messageCode: string
   };
 
-  data :  {};
+  data: {};
 
-  constructor () {
+  constructor() {
     this.message = {
       messageCode: "SUCCESS"
     };
     this.data = {};
   }
 
-  Success (data = {}) {
+  Success(data = {}) {
     this.data = data;
     return this;
   }
 
-  Failed (message : {
-    messageCode : string
+  Failed(message: {
+    messageCode: string
   }) {
     this.message = message;
     return this;

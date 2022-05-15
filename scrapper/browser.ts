@@ -2,9 +2,11 @@ import puppeteer from 'puppeteer';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 import ProfilePage, { PROFILE_SELECTORS } from '../pageobjects/Profile/ProfilePage';
+import getData from '../pageobjects/Profile/ProfilePageHelper';
+import { UserProfile } from '../models/UserProfile';
 
 class Browser {
-	async crawl(url : string, body : {username : string, password : string}) : Promise<void> {
+	async crawl(url: string, body: { username: string, password: string }): Promise<void> {
 		try {
 			console.log('### Crawl started ###')
 
@@ -12,66 +14,49 @@ class Browser {
 			const browser = await puppeteer.launch({
 				headless: false,
 				args: ['--start-maximized'],
-				defaultViewport: null
+				defaultViewport: null,
+				dumpio: true
 			});
 
 			const generatedUuid = uuid();
 			const page = await browser.newPage();
 
-			let fileName = '';
+			await page['_client'].send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: path.resolve(__dirname, `../tmp/${generatedUuid}`) });
 
-			// page.on('response', intercept => {
-			// 	const pdfDisposition = intercept.headers()['content-disposition'];
-			// 	if(pdfDisposition && pdfDisposition.includes('pdf')){
-			// 		page.waitForNavigation({ waitUntil: 'networkidle0' })
-			// 		const pdfName = pdfDisposition.split(';')[1].split('=')[1];
-			// 		const slicedName = pdfName.slice(1,pdfName.length - 1);
-			// 		fs.rename(`${path.resolve(__dirname, '../tmp')}/${slicedName}`, `${path.resolve(__dirname, '../tmp')}/123.pdf`, (err) => {
-			// 			if(err) console.log(err);
-			// 			console.log('done!');
-			// 		});
-			// 	}
-			// });
-
-			// await page._client.on('Page.downloadWillBegin', ({ url, suggestedFilename }) => {
-			// 	console.log('download beginning,', url, suggestedFilename);
-			// 	//fileName = suggestedFilename;
-			//   });
-			
-			//   await page._client.on('Page.downloadProgress', ({ state }) => {
-			// 	if (state === 'completed') {
-			// 	  console.log('download completed. File location: ', downloadPath + '/' + fileName);
-			// 	}
-			//   });
-
-			await page['_client'].send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve(__dirname, `../tmp/${generatedUuid}`)});
-	
 			await page.goto(url, {
 				waitUntil: 'domcontentloaded',
 			});
 
 			await page.waitForSelector('button.LockedHomeHeaderStyles__signInButton');
-			// Scrape some selectors
-			let headline = (await page.$$('button.LockedHomeHeaderStyles__signInButton'))[0];
-			if(headline) await headline.evaluate((b : any) => b.click());
 
-			const usernameInput = await (await page.waitForXPath('//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/form/div[1]/label'))!.focus();
+			await page.waitForTimeout(1000);
+
+			await page.evaluate(() => {
+				(document.querySelector('button.LockedHomeHeaderStyles__signInButton') as HTMLElement).click();
+			});
+
+			// for this type of input, evaluate will not work
+			const username = await page.waitForSelector('[name="username"]');
+			await username?.focus();
 			await page.keyboard.type(body.username, {
 				delay: 1
 			});
 
-			const passwordInput = await (await page.waitForXPath('//*[@id="modalUserPassword"]'))!.focus(); 
+			const password = await page.waitForSelector('[name="password"]');
+			await password!.focus();
 			await page.keyboard.type(body.password, {
-				delay:1
+				delay: 1
 			});
 
-			const submitButton = await page.$('button[name="submit"]');
-			await submitButton!.click();
+			await page.evaluate(() => {
+				(document.querySelector('button[name="submit"]') as HTMLElement).click();
+			});
 
 			const profileContainer = await page.waitForSelector('[data-test="profile-container"]');
-			await profileContainer!.click();
+			//sometimes it needs a bit more to load
+			await page.waitForTimeout(1000);
+			await profileContainer!.evaluate((b: any) => b.click());
 
-						
 			// HOME PAGE //
 
 			// PROFILE PAGE //
@@ -81,25 +66,19 @@ class Browser {
 			// await downloadButton.evaluate((b : any) => b.click());
 
 			await page.waitForSelector(PROFILE_SELECTORS.MAIN_PROFILE_INFO_SECTION);
+
+			const userProfileData = await getData(page, generatedUuid);
 			
-			const profileInfoSection =	await ProfilePage.getInfoSection(page);
+			const isPresent = await UserProfile.exists({ email: userProfileData.email });
 
-			const childs = await profileInfoSection[0]?.$$(':scope > *');
-
-			const firstElem = await childs[0].$$('.profileInfoStyle__wrap___102WU');
-			const role = await page.evaluate(el => el.textContent  ? el.textContent : '', firstElem[0]);
-			const role2 = await page.evaluate(el => el.textContent  ? el.textContent : '', firstElem[1]);
-
-			const secondElem = await childs[1].$$('.profileInfoStyle__wrap___102WU');
-			const role3 = await page.evaluate(el => el ? el.textContent : '', secondElem[0]);
-			//const role4 = await page.evaluate(el => el ? el.textContent : '', secondElem[1]);
-
-			console.log(role, role2, role3);
-
+			if(!isPresent) await UserProfile.create(userProfileData);
+			else await UserProfile.replaceOne({email : userProfileData.email}, userProfileData);
+			
+			await page.close();
 			await browser.close();
 
 			return;
-		} catch(err) {
+		} catch (err) {
 			console.log(err);
 		}
 
