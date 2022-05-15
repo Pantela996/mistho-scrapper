@@ -1,4 +1,5 @@
 import { Page } from "puppeteer"
+import { ExperienceSkelet } from "../../models/Experience";
 import { UserProfileSkelet } from "../../models/UserProfile";
 import { PROFILE_SELECTORS } from "./ProfilePage";
 
@@ -29,7 +30,16 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
             const aboutMe = aboutMeSection ? aboutMeSection.textContent : '';
 
             const experience = document.querySelector(experienceSelector);
-            const experienceArray = Array.from(experience.querySelectorAll('li')).map((el : any) => el.innerText);
+            let experienceArray = Array.from(experience.querySelectorAll('li')).map((el : any) => el.innerText);
+            
+            const parsedExperienceArr : ExperienceSkelet[] = experienceArray.map((experience) => {
+                const experienceArr = experience.split('\n');
+                const experienceRole = experienceArr[0];
+                const experienceCompany = experienceArr[1];
+                const experiencePeriod = experienceArr[2];
+                const experienceDescription = experienceArr[3];
+                return { role : experienceRole, companyName : experienceCompany, period : experiencePeriod, description : experienceDescription};
+            });
             
             const skills = document.querySelector(skillsSelector);
             const skillsChildren = skills.querySelectorAll(':scope > *');
@@ -48,7 +58,7 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
                 website: website,
                 phone: phone,
                 aboutMe: aboutMe,
-                experience: experienceArray,
+                experience: parsedExperienceArr,
                 mainSkills: mainSkills,
                 suggestedSkills: suggestedSkills,
                 education: education,
@@ -60,12 +70,4 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
         }, PROFILE_SELECTORS.SECTION_HEADER, PROFILE_SELECTORS.MAIN_PROFILE_INFO_SECTION, PROFILE_SELECTORS.ABOUT_ME, PROFILE_SELECTORS.EXPERIENCE, PROFILE_SELECTORS.SKILLS, PROFILE_SELECTORS.EDUCATION_SECTION, PROFILE_SELECTORS.CERTIFICATION_SECTION, uuid)
 }
 
-const parseExperienceArray = (experience : string[]) => {
-    const experienceArr = Array.from(experience);
-    experienceArr.forEach(experienceString => {
-        
-    })
-}
-
-
-export default getData;
+export {getData};

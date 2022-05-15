@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema, Document } from 'mongoose';
-import { Experience, ExperienceSchema } from './Experience';
+import { ExperienceSchema, ExperienceSkelet } from './Experience';
 
 type UserProfileDocument = Document & UserProfileSkelet;
 
@@ -11,7 +11,7 @@ export type UserProfileSkelet = {
     website: string;
     phone: string;
     aboutMe: string;
-    experience: typeof Experience[];
+    experience: ExperienceSkelet[];
     mainSkills: string[];
     suggestedSkills: string[];
     education: string[],

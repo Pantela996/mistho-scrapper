@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 import ProfilePage, { PROFILE_SELECTORS } from '../pageobjects/Profile/ProfilePage';
-import getData from '../pageobjects/Profile/ProfilePageHelper';
+import {getData} from '../pageobjects/Profile/ProfilePageHelper';
 import { UserProfile } from '../models/UserProfile';
 
 class Browser {
