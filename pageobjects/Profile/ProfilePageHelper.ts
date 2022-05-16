@@ -1,9 +1,15 @@
 import { Page } from "puppeteer"
+import { CertificationSkelet } from "../../models/Certification";
+import { EducationSkelet } from "../../models/Education";
 import { ExperienceSkelet } from "../../models/Experience";
 import { UserProfileSkelet } from "../../models/UserProfile";
 import { PROFILE_SELECTORS } from "./ProfilePage";
 
-const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> => {
+const getProfileData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> => {
+    await page.exposeFunction("parseEducationArray", parseEducationArray);
+    await page.exposeFunction("parseCertificationArr", parseCertificationArr);
+    await page.exposeFunction("parseExperienceArray", parseExperienceArray);
+
     return await page.evaluate(async (sectionHeaderSelector, mainProfileInfoSectionSelector, aboutMeSelector, experienceSelector, skillsSelector, educationSelector, certificationSelector, uuid) => {
             const sectionHeader = document.querySelector(sectionHeaderSelector);
             const name = sectionHeader.querySelector('h3').innerText;
@@ -32,14 +38,7 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
             const experience = document.querySelector(experienceSelector);
             let experienceArray = Array.from(experience.querySelectorAll('li')).map((el : any) => el.innerText);
             
-            const parsedExperienceArr : ExperienceSkelet[] = experienceArray.map((experience) => {
-                const experienceArr = experience.split('\n');
-                const experienceRole = experienceArr[0];
-                const experienceCompany = experienceArr[1];
-                const experiencePeriod = experienceArr[2];
-                const experienceDescription = experienceArr[3];
-                return { role : experienceRole, companyName : experienceCompany, period : experiencePeriod, description : experienceDescription};
-            });
+            const parsedExperienceArr : ExperienceSkelet[] = await parseExperienceArray(experienceArray);
             
             const skills = document.querySelector(skillsSelector);
             const skillsChildren = skills.querySelectorAll(':scope > *');
@@ -47,8 +46,12 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
             const mainSkills: string[] = Array.from(skillsChildren[1].querySelectorAll('div')).map((el: any): string => el.innerText);
             const suggestedSkills: string[] = Array.from(skillsChildren[2].querySelectorAll('div')).map((el: any): string => el.innerText.replace('+\n', ''));
 
-            const education: string[] = Array.from(document.querySelector(educationSelector).querySelector('ul').querySelectorAll('li')).map((el : any): string => el.innerText);
-            const certification: string[] = Array.from(document.querySelector(certificationSelector).querySelector('ul').querySelectorAll('li')).map((el : any): string => el.querySelector('.certificationStyle__entryBody___1f76-').innerText);
+            const educationArr: string[] = Array.from(document.querySelector(educationSelector).querySelector('ul').querySelectorAll('li')).map((el : any): string => el.innerText);
+
+            const parsedEducationArr : EducationSkelet[] = await parseEducationArray(educationArr);
+
+            const certificationArr: string[] = Array.from(document.querySelector(certificationSelector).querySelector('ul').querySelectorAll('li')).map((el : any): string => el.querySelector('.certificationStyle__entryBody___1f76-').innerText);
+            const parsedCertificationArr : CertificationSkelet[] = await parseCertificationArr(certificationArr);
 
             const userProfile : UserProfileSkelet = {
                 name: name,
@@ -61,13 +64,35 @@ const getData = async (page: Page, uuid: string) : Promise<UserProfileSkelet> =>
                 experience: parsedExperienceArr,
                 mainSkills: mainSkills,
                 suggestedSkills: suggestedSkills,
-                education: education,
-                certification: certification,
-                url: uuid
+                education: parsedEducationArr,
+                certification: parsedCertificationArr,
+                url: uuid,
+                urlLink :  `http://localhost:3001/userProfile/download?url=${uuid}`
             }
 
             return Promise.resolve(userProfile);
         }, PROFILE_SELECTORS.SECTION_HEADER, PROFILE_SELECTORS.MAIN_PROFILE_INFO_SECTION, PROFILE_SELECTORS.ABOUT_ME, PROFILE_SELECTORS.EXPERIENCE, PROFILE_SELECTORS.SKILLS, PROFILE_SELECTORS.EDUCATION_SECTION, PROFILE_SELECTORS.CERTIFICATION_SECTION, uuid)
 }
 
-export {getData};
+const parseExperienceArray = async (experienceArray : string[]) : Promise<ExperienceSkelet[]>  => {
+    return experienceArray.map((experience) => {
+        const experienceArr = experience.split('\n');
+        return { role : experienceArr[0], companyName : experienceArr[1], location: experienceArr[2], period : experienceArr[3], description : experienceArr[5]};
+    });
+}
+
+const parseEducationArray = async (educationArr : string[]) : Promise<EducationSkelet[]>  => {
+    return educationArr.map((education) => {
+        const educationArr = education.split('\n');
+        return { institutionName : educationArr[0], level : educationArr[1], location: educationArr[2], period : educationArr[3], description : educationArr[5]};
+    });
+}
+
+const parseCertificationArr = async (certificationArr: string[]): Promise<CertificationSkelet[]> => {
+    return certificationArr.map((certification) => {
+        const certificationArr = certification.split('\n');
+        return { certificateName : certificationArr[0], certificateIssuer : certificationArr[1], period : certificationArr[2], description : certificationArr[4]};
+    });
+}
+
+export {getProfileData};

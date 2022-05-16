@@ -17,12 +17,13 @@ class ResponseModel {
     return this;
   }
 
-  Failed(message: {
+  Failed(messageObject: {
+    message: string,
     messageCode: string
   }) {
-    this.message = message;
+    this.message = messageObject;
     return this;
   }
 }
 
-export default new ResponseModel();
+export default ResponseModel;

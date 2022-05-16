@@ -1,4 +1,6 @@
 import mongoose, { Model, Schema, Document } from 'mongoose';
+import { CertificationSchema, CertificationSkelet } from './Certification';
+import { EducationSchema, EducationSkelet } from './Education';
 import { ExperienceSchema, ExperienceSkelet } from './Experience';
 
 type UserProfileDocument = Document & UserProfileSkelet;
@@ -14,9 +16,10 @@ export type UserProfileSkelet = {
     experience: ExperienceSkelet[];
     mainSkills: string[];
     suggestedSkills: string[];
-    education: string[],
-    certification: string[],
+    education: EducationSkelet[],
+    certification: CertificationSkelet[],
     url: string;
+    urlLink: string;
 }
 
 const userProfileSchema = new Schema(
@@ -64,14 +67,18 @@ const userProfileSchema = new Schema(
             required: false,
         },
         education: {
-            type: [Schema.Types.String],
+            type: [EducationSchema],
             required: false,
         },
         certification: {
-            type: [Schema.Types.String],
+            type: [CertificationSchema],
             required: false,
         },
         url: {
+            type: Schema.Types.String,
+            required: true
+        },
+        urlLink: {
             type: Schema.Types.String,
             required: true
         }

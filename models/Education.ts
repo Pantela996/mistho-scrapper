@@ -1,22 +1,22 @@
 import mongoose, { Model, Schema, Document } from 'mongoose';
 
-type ExperienceDocument = Document & ExperienceSkelet;
+type EducationDocument = Document & EducationSkelet;
 
-export type ExperienceSkelet = {
-    role: string;
-    companyName: string;
-    period: string;
+export type EducationSkelet = {
+    institutionName: string;
+    level: string;
     location: string;
+    period: string;
     description: string;
 }
 
-const ExperienceSchema = new Schema(
+const EducationSchema = new Schema(
     {
-        role: {
+        institutionName: {
             type: Schema.Types.String,
             required: true
         },
-        companyName: {
+        level: {
             type: Schema.Types.String,
             required: true
         },
@@ -31,11 +31,11 @@ const ExperienceSchema = new Schema(
         }
     },
     {
-        collection: 'Experiences',
+        collection: 'Educations',
         timestamps: true,
     },
 );
 
-const Experience: Model<ExperienceDocument> = mongoose.model<ExperienceDocument>('Experience', ExperienceSchema);
+const Education: Model<EducationDocument> = mongoose.model<EducationDocument>('Education', EducationSchema);
 
-export { Experience, ExperienceDocument, ExperienceSchema };
+export { Education, EducationDocument, EducationSchema };
