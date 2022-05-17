@@ -7,7 +7,9 @@ router.post(
   '/',
   [RequestValidator.checkParams],
   async (req: any, res: any, next: any) => {
-    let response = await UserProfileScrappingIntegrationService.ScrapeUserData(req.body);
+    let response = await UserProfileScrappingIntegrationService.ScrapeUserData(
+      req.body
+    );
     res.status(200);
     res.send(response);
   }

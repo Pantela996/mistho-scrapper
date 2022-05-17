@@ -12,9 +12,7 @@ const login = async (
 
     await page.evaluate(() => {
       (
-        document.querySelector(
-          LOGIN_SELECTORS.LOGIN_BUTTON
-        ) as HTMLElement
+        document.querySelector(LOGIN_SELECTORS.LOGIN_BUTTON) as HTMLElement
       ).click();
     });
 
@@ -32,23 +30,20 @@ const login = async (
     });
 
     await page.evaluate(() => {
-      (document.querySelector(LOGIN_SELECTORS.SUBMIT_BUTTON) as HTMLElement).click();
-    });
-
-    // 10 seconds to be sure that enough time elapsed, if its error. If its not error we are not waiting for it
-    await page.waitForNavigation({
-      timeout: 10000,
+      (
+        document.querySelector(LOGIN_SELECTORS.SUBMIT_BUTTON) as HTMLElement
+      ).click();
     });
   } catch (err: any) {
-    if (err.name === 'TimeoutError')
-      throw new InvalidCredentialsException('Invalid credentials');
-    console.log(err);
+    throw new InvalidCredentialsException(err.message);
   }
 };
 
 const logout = async (page: Page): Promise<void> => {
   return await page.evaluate(async () => {
-    (document.querySelector(LOGIN_SELECTORS.LOGOUT_BUTTON) as HTMLElement).click();
+    (
+      document.querySelector(LOGIN_SELECTORS.LOGOUT_BUTTON) as HTMLElement
+    ).click();
   });
 };
 

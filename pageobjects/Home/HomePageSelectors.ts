@@ -1,3 +1,3 @@
 export const enum HOME_SELECTORS {
-  PROFILE_CONTAINER = '[data-test="profile-container"]',
+  PROFILE_CONTAINER = '[data-ga-lbl="My Profile"]',
 }

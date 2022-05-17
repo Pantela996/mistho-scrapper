@@ -21,10 +21,10 @@ const init = async () => {
     const concurrency = puppeteer_cluster_1.Cluster.CONCURRENCY_BROWSER;
     exports.cluster = cluster = await puppeteer_cluster_1.Cluster.launch({
         concurrency: concurrency,
-        maxConcurrency: 2,
+        maxConcurrency: 1,
         timeout: 120000,
         puppeteerOptions: {
-            headless: true,
+            headless: false,
             dumpio: false,
             handleSIGTERM: true,
             handleSIGINT: true,

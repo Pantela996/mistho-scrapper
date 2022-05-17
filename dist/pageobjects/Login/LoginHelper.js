@@ -26,15 +26,9 @@ const login = async (page, body) => {
         await page.evaluate(() => {
             document.querySelector("button[name=\"submit\"]" /* SUBMIT_BUTTON */).click();
         });
-        // 10 seconds to be sure that enough time elapsed, if its error. If its not error we are not waiting for it
-        await page.waitForNavigation({
-            timeout: 10000,
-        });
     }
     catch (err) {
-        if (err.name === 'TimeoutError')
-            throw new InvalidCredentialsException_1.default('Invalid credentials');
-        console.log(err);
+        throw new InvalidCredentialsException_1.default(err.message);
     }
 };
 exports.login = login;

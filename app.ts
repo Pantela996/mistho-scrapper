@@ -22,7 +22,9 @@ connectToDatabase().then(() => {
 });
 
 const startApp = async () => {
-  await init();
+  init().then(() => {
+    console.log('puppeteer cluster started');
+  });
 
   app.use(logger('dev'));
   app.use(express.json());

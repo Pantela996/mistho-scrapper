@@ -7,5 +7,5 @@ export enum PROFILE_SELECTORS {
   SECTION_HEADER = '[data-test="sectionHeader"]',
   EDUCATION_SECTION = '[data-test="EducationSection"]',
   CERTIFICATION_SECTION = '[data-test="CertificationSection"]',
-  SECTION_CONTENT = '.profileInfoStyle__wrap___102WU'
+  SECTION_CONTENT = '.profileInfoStyle__wrap___102WU',
 }

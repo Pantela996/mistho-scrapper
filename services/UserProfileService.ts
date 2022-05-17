@@ -32,7 +32,7 @@ class UserProfileService {
     const isPresent = await UserProfile.exists({
       email: userProfileData.email,
     });
-    
+
     if (!isPresent) await UserProfile.create(userProfileData);
     else {
       const existingUserProfileData = await UserProfile.findOne({

@@ -45,7 +45,9 @@ const app = (0, express_1.default)();
     console.log('mongo connected');
 });
 const startApp = async () => {
-    await (0, PuppeteerCluster_1.init)();
+    (0, PuppeteerCluster_1.init)().then(() => {
+        console.log('puppeteer cluster started');
+    });
     app.use((0, morgan_1.default)('dev'));
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: false }));

@@ -13,19 +13,20 @@ const init = async () => {
     '--ignore-certificate-errors',
     "--proxy-server='direct://'",
     '--proxy-bypass-list=*',
-    '--lang=en-US,en'];
+    '--lang=en-US,en',
+  ];
 
   const concurrency = Cluster.CONCURRENCY_BROWSER;
   cluster = await Cluster.launch({
     concurrency: concurrency,
-    maxConcurrency: 2,
+    maxConcurrency: 1,
     timeout: 120000,
     puppeteerOptions: {
       headless: true,
       dumpio: false,
       handleSIGTERM: true,
       handleSIGINT: true,
-      args: args
+      args: args,
     },
   });
 };

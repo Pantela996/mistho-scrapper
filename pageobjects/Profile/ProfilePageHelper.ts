@@ -147,7 +147,9 @@ const getProfileData = async (
     uuid,
     process.env.URL ? process.env.URL : 'http://localhost',
     // add port if local env
-    (!process.env.ENV || process.env.ENV === 'DEV') ? `:${process.env.PORT2!}` : ''!
+    !process.env.ENV || process.env.ENV === 'DEV'
+      ? `:${process.env.PORT2!}`
+      : ''!
   );
 };
 
