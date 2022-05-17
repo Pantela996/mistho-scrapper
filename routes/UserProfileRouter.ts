@@ -1,9 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Response } from 'express';
 import UserProfileService from '../services/UserProfileService';
 import path from 'path';
 import mime from 'mime';
-import fs, { rmSync } from 'fs';
 import ResponseModel from '../models/ResponseModel';
+import { getFileFromDirectory } from '../util/FileManager';
 const router = express.Router();
 
 router.get('/', async (req: any, res: Response, next: NextFunction) => {
@@ -19,13 +19,10 @@ router.get('/all', async (req: any, res: Response, next: NextFunction) => {
 
 router.get('/download', async (req: any, res: Response, next: NextFunction) => {
   let file = `${path.resolve(__dirname, `../../tmp/${req.query.url}`)}`;
-  console.log(file);
 
-  fs.readdir(file, (err, files) => {
+  const callback = (files: string[]) => {
     try {
       file = file + `\\${files[0]}`;
-      console.log(file);
-      if (fs.existsSync(file)) console.log('here exists');
 
       const filename = path.basename(file);
       const mimetype = mime.lookup(file);
@@ -42,7 +39,9 @@ router.get('/download', async (req: any, res: Response, next: NextFunction) => {
         })
       );
     }
-  });
+  };
+
+  await getFileFromDirectory(file, callback);
 });
 
 export default router;

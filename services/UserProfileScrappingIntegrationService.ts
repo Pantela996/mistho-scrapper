@@ -1,21 +1,13 @@
 import ResponseModel from '../models/ResponseModel';
-import { UserProfile } from '../models/UserProfile';
 import { login, logout } from '../pageobjects/Login/LoginHelper';
-import ProfilePage, {
-  PROFILE_SELECTORS,
-} from '../pageobjects/Profile/ProfilePage';
 import { getProfileData } from '../pageobjects/Profile/ProfilePageHelper';
-import {
-  getBrowserInstance,
-  getNewPage,
-  goToUrl,
-} from '../util/PuppeteerManager';
+import { goToUrl } from '../util/PuppeteerManager';
 import { v4 as uuid } from 'uuid';
 import { URL_CONSTANTS } from '../constants/URLConstants';
 import path from 'path';
-import { deleteDirectory } from '../util/FileManager';
 import { cluster } from '../util/PuppeteerCluster';
 import UserProfileService from './UserProfileService';
+import { HOME_SELECTORS } from '../pageobjects/Home/HomePageSelectors';
 
 class ScrappingService {
   static async ScrapeUserData(body: {
@@ -25,7 +17,8 @@ class ScrappingService {
     try {
       const generatedUuid = uuid();
 
-      await cluster.task(async ({ page, data }) => {
+      // prepare puppeteer cluster task
+      await cluster.task(async ({ page }) => {
         try {
           // each instance will have its own download folder
           await page['_client'].send('Page.setDownloadBehavior', {
@@ -37,9 +30,9 @@ class ScrappingService {
 
           await login(page, body);
 
-          // HOME PAGE //
+          // HOME PAGE
           const profileContainer = await page.waitForSelector(
-            '[data-test="profile-container"]'
+            HOME_SELECTORS.PROFILE_CONTAINER
           );
 
           //sometimes it needs a bit more to load
@@ -52,19 +45,18 @@ class ScrappingService {
 
           await logout(page);
 
+          // HOME PAGE
           await page.close();
 
           return userProfileData;
         } catch (err: any) {
           await page.close();
 
-          return new ResponseModel().Failed({
-            message: err.message,
-            messageCode: 'FAILED',
-          });
+          throw new Error(err.message);
         }
       });
 
+      // execute puppeteer task
       const result = await cluster.execute(URL_CONSTANTS.GLASSDOOR);
       return new ResponseModel().Success(result);
     } catch (err) {

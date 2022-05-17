@@ -1,6 +1,5 @@
 import createError from 'http-errors';
 import express, { Express, Request, Response } from 'express';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import userProfileRouter from '../routes/UserProfileRouter';
@@ -50,7 +49,6 @@ const server = http.createServer(app);
 
 server.listen(port);
 server.on('error', onError);
-server.on('listening', onListening);
 
 function normalizePort(val: string) {
   const port = parseInt(val, 10);
@@ -88,9 +86,4 @@ function onError(error: any) {
     default:
       throw error;
   }
-}
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
 }

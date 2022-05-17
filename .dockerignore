@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+tmp
+load_test.json
+k6s_50scrappers_results.png
+coms.txt
+.prettierrc.json
+.prettierignore
+tmp

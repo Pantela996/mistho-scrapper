@@ -17,4 +17,10 @@ const deleteDirectory = async (urlHash: string): Promise<void> => {
   }
 };
 
-export { deleteDirectory };
+const getFileFromDirectory = async(file : string, cb : Function) => {
+  fs.readdir(file, (err, files) => {
+    cb(files);
+  });
+}
+
+export { deleteDirectory, getFileFromDirectory };

@@ -60,8 +60,6 @@ const startApp = async () => {
 
   server.listen(port);
   server.on('error', onError);
-  server.on('listening', onListening);
-  server.setTimeout(600000);
 
   function normalizePort(val: string) {
     const port = parseInt(val, 10);
@@ -99,11 +97,6 @@ const startApp = async () => {
       default:
         throw error;
     }
-  }
-
-  function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
   }
 };
 
