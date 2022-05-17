@@ -7,13 +7,13 @@ import userProfileRouter from '../routes/UserProfileRouter';
 import http from 'http';
 import { connectToDatabase } from '../db/MongooseUtil';
 
-require('dotenv').config()
+require('dotenv').config();
 
 const app: Express = express();
 
 connectToDatabase().then(() => {
   console.log('mongo connected');
-})
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -73,9 +73,7 @@ function onError(error: any) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -94,7 +92,5 @@ function onError(error: any) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr!.port;
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
 }

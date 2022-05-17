@@ -1,3 +1,3 @@
-export const enum LOGIN_SELECTORS { 
-    LOGOUT = '[data-test="sign-out"]'
+export const enum LOGIN_SELECTORS {
+  LOGOUT = '[data-test="sign-out"]',
 }

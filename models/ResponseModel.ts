@@ -1,13 +1,13 @@
 class ResponseModel {
   message: {
-    messageCode: string
+    messageCode: string;
   };
 
   data: {};
 
   constructor() {
     this.message = {
-      messageCode: "SUCCESS"
+      messageCode: 'SUCCESS',
     };
     this.data = {};
   }
@@ -17,10 +17,7 @@ class ResponseModel {
     return this;
   }
 
-  Failed(messageObject: {
-    message: string,
-    messageCode: string
-  }) {
+  Failed(messageObject: { message: string; messageCode: string }) {
     this.message = messageObject;
     return this;
   }

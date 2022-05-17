@@ -13,7 +13,7 @@ import { init } from './util/PuppeteerCluster';
 
 const numCpu = os.cpus().length;
 
-require('dotenv').config()
+require('dotenv').config();
 
 const app: Express = express();
 
@@ -84,9 +84,7 @@ const startApp = async () => {
       throw error;
     }
 
-    var bind = typeof port === 'string'
-      ? 'Pipe ' + port
-      : 'Port ' + port;
+    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {
@@ -105,15 +103,13 @@ const startApp = async () => {
 
   function onListening() {
     var addr = server.address();
-    var bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr!.port;
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
   }
-}
+};
 
 // to handle more requests without thread blocking
 if (cluster.isPrimary) {
-  for(let i = 0; i < numCpu; i++) {
+  for (let i = 0; i < numCpu; i++) {
     cluster.fork();
   }
 
@@ -121,8 +117,8 @@ if (cluster.isPrimary) {
   child.fork('./dist/client/app.js');
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} died.)`)
-  })
+    console.log(`worker ${worker.process.pid} died.)`);
+  });
 } else {
   startApp();
 }
