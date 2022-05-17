@@ -1,15 +1,19 @@
 import { Cluster } from "puppeteer-cluster";
 
-class PuppeteerCluster {
-    static cluster: Cluster;
-
-    static setCluster(cluster : Cluster) {
-        if(!this.cluster) this.cluster = cluster;
-    }
-
-    static getCluster() {
-        return this.cluster;
-    }
+let cluster : Cluster;
+const init = async () => {
+    const concurrency = Cluster.CONCURRENCY_BROWSER;
+    cluster = await Cluster.launch({
+        concurrency: concurrency,
+        maxConcurrency: 3,
+        timeout: 120000,
+        puppeteerOptions: {
+            headless : true,
+            dumpio: false,
+            handleSIGTERM: true,
+            handleSIGINT: true
+        }
+    });
 }
 
-export default PuppeteerCluster;
+export { init, cluster };

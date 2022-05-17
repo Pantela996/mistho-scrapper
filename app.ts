@@ -9,8 +9,7 @@ import { connectToDatabase } from './db/MongooseUtil';
 import * as child from 'child_process';
 import os from 'os';
 import cluster from 'cluster';
-import timeout from 'connect-timeout';
-
+import { init } from './util/PuppeteerCluster';
 
 const numCpu = os.cpus().length;
 
@@ -22,9 +21,9 @@ connectToDatabase().then(() => {
   console.log('mongo connected');
 });
 
-app.use(timeout(600000));
+const startApp = async () => {
+  await init();
 
-const startApp = () => {
   app.use(logger('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -62,6 +61,7 @@ const startApp = () => {
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
+  server.setTimeout(600000);
 
   function normalizePort(val: string) {
     const port = parseInt(val, 10);

@@ -8,7 +8,8 @@ export default function () {
     });
 
     let options = {
-        duration: '1m',
+        duration: '5m',
+        timeout: '300s',
         vus: 50,
         headers: {
             'Content-Type': 'application/json',
