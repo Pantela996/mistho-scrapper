@@ -131,11 +131,11 @@ The most important thing of making this API is making it optimized, so it can ha
 
 3. NodeJS Cluster module - Essence of every production NodeJS application, we are getting number of CPUs and creating that many Express servers to listen at the same time on the same port. 
 
-4. Puppeteer cluster module - Used in combination with NodeJS's cluster module, to limit concurrency of browsers, since when we are having 50 scrapping at the same, biggest issue would be too much instances of the Chrome, so we need to restrict it to some reasonable number, and for that we used this super cool module.
+4. Puppeteer cluster module - Used in combination with NodeJS's cluster module, to limit concurrency of browsers, since when API is handling 50 scrapping at the same, biggest issue would be too much instances of the Chrome. So it needs to be restricted to some reasonable number. And for that we used this super cool module.
 
 
 ## Load testing
 
-For purpose of load testing, K6 is used. In the root of this directory there is file called `load_test.js`, which can be run with command `k6 run ./load_test.js -i 50 -vu 50`. Before running it you have to install k6 first https://k6.io/docs/getting-started/installation/ . Running this test, I was able to simulate 50 simultaneous requests at the same time. API was able to handle it without errors multiple times. There were some times when success rate was about 40/50, but this was not due to API mistakes, rather it was cause by Glassdoor website where they sometimes reject login without reason, just saying Try again. On picture `k6s_50scrappers_results` you can see some statistics from time where all 50 requests where handled properly. 
+For purpose of load testing, K6 is used. In the root of this directory there is file called `load_test.js`, which can be run with command `k6 run ./load_test.js -i 50 -vu 50`. Before running it you have to install k6 first https://k6.io/docs/getting-started/installation/ . Running this test, API was able to handle 50 simultaneous requests at the same time. API was able to handle it without errors multiple times. There were some times when success rate was about 40/50, but this was not due to API mistakes, rather it was cause by Glassdoor website where they sometimes reject login without reason, just saying Try again. On picture `k6s_50scrappers_results` you can see some statistics from time where all 50 requests where handled properly. 
 
 ![alt text](https://github.com/Pantela996/mistho-scrapper/blob/feature/scrapper/k6s_50scrappers_results.png?raw=true)
