@@ -127,7 +127,7 @@ The most important thing of making this API is making it optimized, so it can ha
 
 1. There are separated processes for Scrapping and retrieving data. On start of the program, one `child_process` is spawned for handling reading from database, on port 3001. Reason for this is pretty clear, we want to serve files immediately, and we don't want scrapping to be handling those kind of transactions.
 
-2. MongoDB. Fast writing time in data similar to RAW data was pretty important, since when there is a lot of traffic this would be the bottleneck. There are defined some relations between the entities, but not strong enough to justify relational database at this point. Improvement possibility: Instead of writing with scrapper, we can emit event to child with RAW data, and the child can handle writing data as well. Didn't want to overkill it by doing this, but it's there as idea.
+2. MongoDB. Fast writing time in data similar to raw data was pretty important, since when there is a lot of traffic this would be the bottleneck. There are defined some relations between the entities, but not strong enough to justify relational database at this point. Improvement possibility: Instead of writing with scrapper, we can emit event to child with raw data, and the child can handle writing data as well. Didn't want to overkill it by doing this, but it's there as idea.
 
 3. NodeJS Cluster module - Essence of every production NodeJS application, we are getting number of CPUs and creating that many Express servers to listen at the same time on the same port. 
 
