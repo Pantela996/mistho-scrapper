@@ -59,8 +59,9 @@ class ScrappingService {
       // execute puppeteer task
       const result = await cluster.execute(URL_CONSTANTS.GLASSDOOR);
 
-      await cluster.idle();
-      await cluster.close();
+      // still not tested, issue with login credentials
+      // await cluster.idle();
+      // await cluster.close();
       return new ResponseModel().Success(result);
     } catch (err : any) {
       console.log(err);
