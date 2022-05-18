@@ -4,8 +4,8 @@ This API provides scrapping utility for Glassdoor website. API is written in Nod
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Decision Making](#decisions)
-- [Load testing](#testing)
+- [Decision making](#decision-making)
+- [Load testing](#load-testing)
 
 ## Installation
 
