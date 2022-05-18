@@ -34,8 +34,23 @@ const login = async (
         document.querySelector(LOGIN_SELECTORS.SUBMIT_BUTTON) as HTMLElement
       ).click();
     });
+
+    await page.waitForNavigation({waitUntil: 'networkidle2', timeout : 5000});
   } catch (err: any) {
-    throw new InvalidCredentialsException(err.message);
+    console.log(err.name);
+    if(err.name === 'TimeoutError') {
+      // pull error message if exists
+      const errorMessage = await page.evaluate(() => {
+        const errorDivChildren = document.querySelector(LOGIN_SELECTORS.ERROR)?.querySelectorAll('div');
+        if(!errorDivChildren) return null;
+        const errorMessage  = errorDivChildren[errorDivChildren?.length - 1].innerText;
+        return Promise.resolve(errorMessage);
+      })
+
+      if(!errorMessage) return err;
+
+      if(errorMessage.includes(LOGIN_SELECTORS.ERROR_TEXT_INVALID_CREDENTIALS) || errorMessage.includes(LOGIN_SELECTORS.ERROR_TEXT_BOT)) throw new InvalidCredentialsException('Invalid credentials');
+    }
   }
 };
 

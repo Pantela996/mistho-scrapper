@@ -26,9 +26,25 @@ const login = async (page, body) => {
         await page.evaluate(() => {
             document.querySelector("button[name=\"submit\"]" /* SUBMIT_BUTTON */).click();
         });
+        await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 5000 });
     }
     catch (err) {
-        throw new InvalidCredentialsException_1.default(err.message);
+        console.log(err.name);
+        if (err.name === 'TimeoutError') {
+            // pull error message if exists
+            const errorMessage = await page.evaluate(() => {
+                var _a;
+                const errorDivChildren = (_a = document.querySelector(".textAndIconContainer .text" /* ERROR */)) === null || _a === void 0 ? void 0 : _a.querySelectorAll('div');
+                if (!errorDivChildren)
+                    return null;
+                const errorMessage = errorDivChildren[(errorDivChildren === null || errorDivChildren === void 0 ? void 0 : errorDivChildren.length) - 1].innerText;
+                return Promise.resolve(errorMessage);
+            });
+            if (!errorMessage)
+                return err;
+            if (errorMessage.includes("The username and password you specified are invalid." /* ERROR_TEXT_INVALID_CREDENTIALS */) || errorMessage.includes("Please prove to us you're not a bot and retry with your credentials." /* ERROR_TEXT_BOT */))
+                throw new InvalidCredentialsException_1.default('Invalid credentials');
+        }
     }
 };
 exports.login = login;

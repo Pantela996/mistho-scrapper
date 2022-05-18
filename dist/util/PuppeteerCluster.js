@@ -16,7 +16,7 @@ const init = async () => {
         '--ignore-certificate-errors',
         "--proxy-server='direct://'",
         '--proxy-bypass-list=*',
-        '--lang=en-US,en'
+        '--lang=en-US,en',
     ];
     const concurrency = puppeteer_cluster_1.Cluster.CONCURRENCY_BROWSER;
     exports.cluster = cluster = await puppeteer_cluster_1.Cluster.launch({
@@ -24,11 +24,11 @@ const init = async () => {
         maxConcurrency: 1,
         timeout: 120000,
         puppeteerOptions: {
-            headless: false,
+            headless: true,
             dumpio: false,
             handleSIGTERM: true,
             handleSIGINT: true,
-            args: args
+            args: args,
         },
     });
 };

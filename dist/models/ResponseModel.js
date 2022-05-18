@@ -6,12 +6,14 @@ class ResponseModel {
             messageCode: 'SUCCESS',
         };
         this.data = {};
+        this.statusCode = 200;
     }
     Success(data = {}) {
         this.data = data;
         return this;
     }
-    Failed(messageObject) {
+    Failed(messageObject, statusCode) {
+        this.statusCode = statusCode;
         this.message = messageObject;
         return this;
     }

@@ -10,6 +10,7 @@ const PuppeteerManager_1 = require("../util/PuppeteerManager");
 const uuid_1 = require("uuid");
 const path_1 = __importDefault(require("path"));
 const PuppeteerCluster_1 = require("../util/PuppeteerCluster");
+const UserProfileService_1 = __importDefault(require("./UserProfileService"));
 class ScrappingService {
     static async ScrapeUserData(body) {
         try {
@@ -25,15 +26,13 @@ class ScrappingService {
                     await (0, PuppeteerManager_1.goToUrl)(page, "https://www.glassdoor.com/index.htm" /* GLASSDOOR */);
                     await (0, LoginHelper_1.login)(page, body);
                     // HOME PAGE
-                    const profileContainer = await page.waitForSelector("[data-ga-lbl=\"My Profile\"]" /* PROFILE_CONTAINER */, {
-                        timeout: 30000
-                    });
+                    const profileContainer = await page.waitForSelector("[data-ga-lbl=\"My Profile\"]" /* PROFILE_CONTAINER */);
                     //sometimes it needs a bit more to load
                     await page.waitForTimeout(1000);
                     await profileContainer.evaluate((b) => b.click());
                     // PROFILE PAGE
                     const userProfileData = await (0, ProfilePageHelper_1.getProfileData)(page, generatedUuid);
-                    // await UserProfileService.saveOrUpdateUser(userProfileData);
+                    await UserProfileService_1.default.saveOrUpdateUser(userProfileData);
                     await (0, LoginHelper_1.logout)(page);
                     // HOME PAGE
                     await page.close();
@@ -46,11 +45,13 @@ class ScrappingService {
             });
             // execute puppeteer task
             const result = await PuppeteerCluster_1.cluster.execute("https://www.glassdoor.com/index.htm" /* GLASSDOOR */);
+            await PuppeteerCluster_1.cluster.idle();
+            await PuppeteerCluster_1.cluster.close();
             return new ResponseModel_1.default().Success(result);
         }
         catch (err) {
             console.log(err);
-            return new ResponseModel_1.default().Failed(err.message);
+            return new ResponseModel_1.default().Failed({ message: err.message, messageCode: 'FAILED' }, 500);
         }
     }
 }

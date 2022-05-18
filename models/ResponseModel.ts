@@ -5,11 +5,14 @@ class ResponseModel {
 
   data: {};
 
+  statusCode : number;
+
   constructor() {
     this.message = {
       messageCode: 'SUCCESS',
     };
     this.data = {};
+    this.statusCode = 200;
   }
 
   Success(data = {}) {
@@ -17,7 +20,8 @@ class ResponseModel {
     return this;
   }
 
-  Failed(messageObject: { message: string; messageCode: string }) {
+  Failed(messageObject: { message: string; messageCode: string }, statusCode : number) {
+    this.statusCode = statusCode;
     this.message = messageObject;
     return this;
   }

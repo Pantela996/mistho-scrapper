@@ -75,7 +75,9 @@ const getProfileData = async (page, uuid) => {
         }
     }, ProfilePageSelectors_1.PROFILE_SELECTORS.SECTION_HEADER, ProfilePageSelectors_1.PROFILE_SELECTORS.MAIN_PROFILE_INFO_SECTION, ProfilePageSelectors_1.PROFILE_SELECTORS.SECTION_CONTENT, ProfilePageSelectors_1.PROFILE_SELECTORS.ABOUT_ME, ProfilePageSelectors_1.PROFILE_SELECTORS.EXPERIENCE, ProfilePageSelectors_1.PROFILE_SELECTORS.SKILLS, ProfilePageSelectors_1.PROFILE_SELECTORS.EDUCATION_SECTION, ProfilePageSelectors_1.PROFILE_SELECTORS.CERTIFICATION_SECTION, uuid, process.env.URL ? process.env.URL : 'http://localhost', 
     // add port if local env
-    (!process.env.ENV || process.env.ENV === 'DEV') ? `:${process.env.PORT2}` : '');
+    !process.env.ENV || process.env.ENV === 'DEV'
+        ? `:${process.env.PORT2}`
+        : '');
 };
 exports.getProfileData = getProfileData;
 const parseExperienceArray = async (experienceArray) => {

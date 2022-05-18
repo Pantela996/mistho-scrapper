@@ -8,12 +8,13 @@ const router = express.Router();
 
 router.get('/', async (req: any, res: Response, next: NextFunction) => {
   let response = await UserProfileService.getUserProfile(req.query.email);
+  res.status(response.statusCode);
   res.send(response);
 });
 
 router.get('/all', async (req: any, res: Response, next: NextFunction) => {
   let response = await UserProfileService.getAllUsersProfiles();
-  res.status(200);
+  res.status(response.statusCode);
   res.send(response);
 });
 
@@ -29,14 +30,15 @@ router.get('/download', async (req: any, res: Response, next: NextFunction) => {
 
       res.setHeader('Content-disposition', 'attachment; filename=' + filename);
       res.setHeader('Content-type', mimetype);
+      res.status(200);
       res.download(file); // Set disposition and send it.
-    } catch (err) {
-      res.status(500);
+    } catch (err : any) {
+      console.log(err.message);
       res.send(
         new ResponseModel().Failed({
           message: (err as any).message,
           messageCode: 'FAILED',
-        })
+        }, 500)
       );
     }
   };

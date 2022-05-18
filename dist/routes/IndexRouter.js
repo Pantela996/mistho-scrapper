@@ -9,7 +9,7 @@ const RequestValidator_1 = __importDefault(require("../middlewares/RequestValida
 const UserProfileScrappingIntegrationService_1 = __importDefault(require("../services/UserProfileScrappingIntegrationService"));
 router.post('/', [RequestValidator_1.default.checkParams], async (req, res, next) => {
     let response = await UserProfileScrappingIntegrationService_1.default.ScrapeUserData(req.body);
-    res.status(200);
+    res.status(response.statusCode);
     res.send(response);
 });
 exports.default = router;

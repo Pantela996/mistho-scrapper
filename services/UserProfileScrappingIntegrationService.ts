@@ -47,7 +47,7 @@ class ScrappingService {
 
           // HOME PAGE
           await page.close();
-
+          
           return userProfileData;
         } catch (err: any) {
           await page.close();
@@ -58,10 +58,13 @@ class ScrappingService {
 
       // execute puppeteer task
       const result = await cluster.execute(URL_CONSTANTS.GLASSDOOR);
+
+      await cluster.idle();
+      await cluster.close();
       return new ResponseModel().Success(result);
-    } catch (err) {
+    } catch (err : any) {
       console.log(err);
-      return new ResponseModel().Failed((err as any).message);
+      return new ResponseModel().Failed({message : err.message, messageCode : 'FAILED'}, 500);
     }
   }
 }

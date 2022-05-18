@@ -10,7 +10,7 @@ router.post(
     let response = await UserProfileScrappingIntegrationService.ScrapeUserData(
       req.body
     );
-    res.status(200);
+    res.status(response.statusCode);
     res.send(response);
   }
 );
